@@ -41,20 +41,6 @@ export async function proxy(request: NextRequest) {
         },
     });
 
-    // Handle OAuth callback: exchange `code` for a session and strip it from the URL
-    const code = request.nextUrl.searchParams.get("code");
-
-    if (code) {
-        await supabase.auth.exchangeCodeForSession(code);
-
-        const redirectUrl = request.nextUrl.clone();
-        redirectUrl.searchParams.delete("code");
-
-        return NextResponse.redirect(redirectUrl, {
-            headers: response.headers,
-        });
-    }
-
     const {
         data: { user },
     } = await supabase.auth.getUser();
