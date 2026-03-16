@@ -20,7 +20,7 @@ export async function AuthenticatedLayout({
     return (
         <div className="min-h-screen flex flex-col">
             <header className="sticky top-0 z-10 border-b bg-background">
-                <div className="container flex h-14 items-center justify-between px-4">
+                <div className="flex h-14 items-center justify-between px-6">
                     <nav className="flex items-center gap-6">
                         <Link href="/dashboard" className="font-semibold">
                             Sports Events
@@ -42,7 +42,7 @@ export async function AuthenticatedLayout({
                     </div>
                 </div>
             </header>
-            <main className="flex-1 container px-4 py-6">{children}</main>
+            <main className="flex-1 px-4 py-6">{children}</main>
         </div>
     );
 }

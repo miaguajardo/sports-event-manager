@@ -65,7 +65,7 @@ export default async function DashboardPage({ searchParams }: Props) {
             ) : (
                 <div className="space-y-8">
                     {upcomingEvents.length > 0 && (
-                        <section className="space-y-3">
+                        <section className="space-y-3 mx-4">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-lg font-semibold">Upcoming Events</h2>
                                 <p className="text-xs text-muted-foreground">
@@ -118,7 +118,7 @@ export default async function DashboardPage({ searchParams }: Props) {
                     )}
 
                     {pastEvents.length > 0 && (
-                        <section className="space-y-3">
+                        <section className="space-y-3 mx-4">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-lg font-semibold">Past Events</h2>
                                 <p className="text-xs text-muted-foreground">
