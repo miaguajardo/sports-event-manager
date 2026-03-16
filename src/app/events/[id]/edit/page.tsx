@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getEvent } from "@/app/events/queries";
-import { getVenuesForCurrentUser } from "@/app/events/queries";
+import { getEvent, getVenuesForCurrentUser } from "@/app/events/queries";
+import { createClient } from "@/lib/supabase/server";
 import { EventForm } from "@/app/events/event-form";
 import { DeleteEventButton } from "@/app/events/delete-event-button";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,18 @@ export default async function EditEventPage({ params }: Props) {
     getVenuesForCurrentUser(),
   ]);
   if (!event) notFound();
+
+  // Check if the current user is the owner of the event
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isOwner = user?.id === event.user_id;
+
+  if (!isOwner) {
+    notFound();
+  }
+
   const venues = venuesResult.success ? venuesResult.data : [];
 
   return (

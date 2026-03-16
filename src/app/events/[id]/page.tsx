@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getEvent } from "@/app/events/queries";
+import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,15 +18,24 @@ export default async function EventDetailPage({ params }: Props) {
   const event = await getEvent(id);
   if (!event) notFound();
 
+  // Check if the current user is the owner of the event
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isOwner = user?.id === event.user_id;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/dashboard">← Back to events</Link>
         </Button>
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`/events/${id}/edit`}>Edit</Link>
-        </Button>
+        {isOwner && (
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/events/${id}/edit`}>Edit</Link>
+          </Button>
+        )}
       </div>
 
       <Card className="border bg-zinc-900">
