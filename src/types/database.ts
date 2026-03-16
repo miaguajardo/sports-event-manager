@@ -37,7 +37,7 @@ export interface EventVenue {
     venue_id: string;
 }
 
-export type SportType = "Soccer" | "Basketball" | "Tennis" | "Volleyball" | "Baseball" | "Football" | "Other";
+export type SportType = "Soccer" | "Basketball" | "Tennis" | "Volleyball" | "Baseball" | "Football" | "Field Hockey" |"Hockey" | "Running" | "NASCAR" | "Golf" | "Other";
 
 export const SPORT_TYPES: SportType[] = [
     "Soccer",
@@ -46,6 +46,11 @@ export const SPORT_TYPES: SportType[] = [
     "Volleyball",
     "Baseball",
     "Football",
+    "Field Hockey",
+    "Hockey",
+    "Running",
+    "NASCAR",
+    "Golf",
     "Other",
 ];
 

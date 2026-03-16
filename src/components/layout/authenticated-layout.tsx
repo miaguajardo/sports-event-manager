@@ -25,6 +25,12 @@ export async function AuthenticatedLayout({
                         <Link href="/dashboard" className="font-semibold">
                             Sports Events
                         </Link>
+                        <Link href="/events/new" className="text-muted-foreground hover:text-foreground text-sm">
+                            New Event
+                        </Link>
+                        <Link href="/venues" className="text-muted-foreground hover:text-foreground text-sm">
+                            Venues
+                        </Link>
                     </nav>
                     <div className="flex items-center gap-3">
                         <span className="text-sm text-muted-foreground">{user.email}</span>

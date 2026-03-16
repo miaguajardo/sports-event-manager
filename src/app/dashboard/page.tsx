@@ -18,12 +18,29 @@ export default async function DashboardPage({ searchParams }: Props) {
     const { q, sport } = await searchParams;
     const result = await getEventsForDashboard(q, sport);
 
+    const now = new Date();
+
+    const upcomingEvents =
+        result.success
+            ? result.data.filter(
+                  (event) => new Date(event.start_at).getTime() >= now.getTime()
+              )
+            : [];
+
+    const pastEvents =
+        result.success
+            ? result.data.filter(
+                  (event) => new Date(event.start_at).getTime() < now.getTime()
+              )
+            : [];
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-2xl font-semibold">Events</h1>
-                    <p className="text-muted-foreground text-sm">
+                    <h1>Events</h1>
+                    <div className="mt-1 h-0.5 w-14 rounded-full bg-primary/70" />
+                    <p className="mt-2 text-muted-foreground text-sm">
                         View and manage your sports events.
                     </p>
                 </div>
@@ -46,43 +63,107 @@ export default async function DashboardPage({ searchParams }: Props) {
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {result.data.map((event) => (
-                        <div key={event.id} className="group relative">
-                            <Card className="relative flex flex-col overflow-visible border bg-zinc-900 transition-all duration-200 group-hover:border-accent/50 group-hover:ring-2 group-hover:ring-accent/20 group-hover:ring-offset-2 group-hover:ring-offset-background hover:bg-zinc-900">
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-lg uppercase font-bold">
-                                    <Link
-                                        href={`/events/${event.id}/edit`}
-                                        className="hover:underline"
-                                    >
-                                        {event.name}
-                                    </Link>
-                                </CardTitle>
-                                <CardDescription>
-                                    {event.sport_type}
-                                    {event.venues?.length
-                                        ? ` · ${event.venues.map((v) => v.name).join(", ")}`
-                                        : ""}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="flex-1 pt-0">
-                                <p className="text-sm text-muted-foreground">
-                                    {new Date(event.start_at).toLocaleString(undefined, {
-                                        dateStyle: "medium",
-                                        timeStyle: "short",
-                                    })}
+                <div className="space-y-8">
+                    {upcomingEvents.length > 0 && (
+                        <section className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-lg font-semibold">Upcoming Events</h2>
+                                <p className="text-xs text-muted-foreground">
+                                    {upcomingEvents.length}{" "}
+                                    {upcomingEvents.length === 1 ? "event" : "events"}
                                 </p>
-                            </CardContent>
-                            <CardContent className="flex gap-2 pt-0">
-                                {/* TODO: Think I want to remove the edit button */}
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href={`/events/${event.id}/edit`}>Edit</Link>
-                                </Button>
-                            </CardContent>
-                        </Card>
-                        </div>
-                    ))}
+                            </div>
+                            <div className="relative -mx-4 overflow-x-auto pt-2 pb-4 sm:mx-0">
+                                <div className="flex gap-4 px-4 sm:px-0">
+                                    {upcomingEvents.map((event) => (
+                                        <div
+                                            key={event.id}
+                                            className="group relative w-72 shrink-0"
+                                        >
+                                            <Card className="relative flex flex-col h-full overflow-visible border bg-zinc-900 transition-all duration-200 group-hover:border-accent/50 group-hover:ring-2 group-hover:ring-accent/20 group-hover:ring-offset-2 group-hover:ring-offset-background hover:bg-zinc-900">
+                                                <CardHeader className="pb-2">
+                                                    <CardTitle className="text-lg uppercase font-bold">
+                                                        <Link
+                                                            href={`/events/${event.id}`}
+                                                            className="hover:underline"
+                                                        >
+                                                            {event.name}
+                                                        </Link>
+                                                    </CardTitle>
+                                                    <CardDescription>
+                                                        {event.sport_type}
+                                                        {event.venues?.length
+                                                            ? ` · ${event.venues
+                                                                  .map((v) => v.name)
+                                                                  .join(", ")}`
+                                                            : ""}
+                                                    </CardDescription>
+                                                </CardHeader>
+                                                <CardContent className="pt-0 mt-auto">
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {new Date(
+                                                            event.start_at
+                                                        ).toLocaleString(undefined, {
+                                                            dateStyle: "medium",
+                                                            timeStyle: "short",
+                                                        })}
+                                                    </p>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+                    )}
+
+                    {pastEvents.length > 0 && (
+                        <section className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-lg font-semibold">Past Events</h2>
+                                <p className="text-xs text-muted-foreground">
+                                    {pastEvents.length}{" "}
+                                    {pastEvents.length === 1 ? "event" : "events"}
+                                </p>
+                            </div>
+                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                {pastEvents.map((event) => (
+                                    <div key={event.id} className="group relative h-full">
+                                        <Card className="relative flex h-full flex-col overflow-visible border bg-zinc-900 transition-all duration-200 group-hover:border-accent/50 group-hover:ring-2 group-hover:ring-accent/20 group-hover:ring-offset-2 group-hover:ring-offset-background hover:bg-zinc-900">
+                                            <CardHeader className="pb-2">
+                                                <CardTitle className="text-lg uppercase font-bold">
+                                                    <Link
+                                                        href={`/events/${event.id}`}
+                                                        className="hover:underline"
+                                                    >
+                                                        {event.name}
+                                                    </Link>
+                                                </CardTitle>
+                                                <CardDescription>
+                                                    {event.sport_type}
+                                                    {event.venues?.length
+                                                        ? ` · ${event.venues
+                                                              .map((v) => v.name)
+                                                              .join(", ")}`
+                                                        : ""}
+                                                </CardDescription>
+                                            </CardHeader>
+                                            <CardContent className="pt-0 mt-auto">
+                                                <p className="text-sm text-muted-foreground">
+                                                    {new Date(
+                                                        event.start_at
+                                                    ).toLocaleString(undefined, {
+                                                        dateStyle: "medium",
+                                                        timeStyle: "short",
+                                                    })}
+                                                </p>
+                                            </CardContent>
+                                        </Card>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
                 </div>
             )}
         </div>
