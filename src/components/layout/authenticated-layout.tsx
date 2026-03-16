@@ -17,7 +17,7 @@ export async function AuthenticatedLayout({
 
     return (
         <div className="min-h-screen flex flex-col">
-            <AuthHeader email={user.email} />
+            <AuthHeader email={user.email ?? null} />
             <main className="flex-1 px-4 py-6">{children}</main>
         </div>
     );
